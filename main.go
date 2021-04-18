@@ -26,7 +26,7 @@ func main() {
 	// define port, we need to set it as env for Heroku deployment
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3001"
+		port = "8080"
 	}
 	// start server
 	fmt.Printf("Server is listening on %s...", port)
@@ -98,7 +98,15 @@ func (s *Searcher) Load(filepath string) error {
 func (s *Searcher) Search(query string) ([]Record, error) {
 	var result []Record
 	for _, record := range s.records {
-		if strings.Contains(record.Title, query) || strings.Contains(record.Content, query) {
+		// parse to lower case to remove the case sensitive
+		qry := strings.ToLower(query)
+		title := strings.ToLower(record.Title)
+		content := strings.ToLower(record.Content)
+
+		// for title it contains query
+		// for contents it should contains qry more than 2 times
+
+		if strings.Contains(title, qry) || strings.Count(content, qry) > 2 {
 			result = append(result, record)
 		}
 	}
